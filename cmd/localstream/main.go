@@ -5,10 +5,11 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/mosadeghi/local-stream/internal/public"
 	"github.com/mosadeghi/local-stream/internal/util"
 )
 
-const moviesPath = "D:\\Videos\\videos"
+const MoviesPath = "D:\\Videos\\videos"
 
 func main() {
 	router := gin.Default()
@@ -18,7 +19,7 @@ func main() {
 	router.LoadHTMLGlob("web/templates/*.html")
 
 	router.GET("/", func(c *gin.Context) {
-		movies, err := util.ListVideoFiles(moviesPath)
+		movies, err := util.ListVideoFiles(MoviesPath)
 		if err != nil {
 			log.Println("Failed to scan movies:", err)
 			movies = []string{}
@@ -30,6 +31,8 @@ func main() {
 			"movies":  movies,
 		})
 	})
+
+	router.GET("/stream/:filename", public.StreamVideo)
 
 	err := router.Run(":8080")
 	if err != nil {
