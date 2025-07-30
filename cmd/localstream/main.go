@@ -1,10 +1,14 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/mosadeghi/local-stream/internal/util"
 )
+
+const moviesPath = "D:\\Videos\\videos"
 
 func main() {
 	router := gin.Default()
@@ -14,9 +18,16 @@ func main() {
 	router.LoadHTMLGlob("web/templates/*.html")
 
 	router.GET("/", func(c *gin.Context) {
+		movies, err := util.ListVideoFiles(moviesPath)
+		if err != nil {
+			log.Println("Failed to scan movies:", err)
+			movies = []string{}
+		}
+
 		c.HTML(http.StatusOK, "index.html", gin.H{
 			"title":   "LocalStream Home",
-			"message": "Welcome to LocalStream!",
+			"message": "Available Movies",
+			"movies":  movies,
 		})
 	})
 

@@ -7,6 +7,15 @@
 </head>
 <body>
     <h1>{{ .message }}</h1>
-    <p>This is the home page of LocalStream.</p>
+    
+    {{ if .movies }}
+        <ul>
+        {{ range .movies }}
+            <li>{{ . }}</li>
+        {{ end }}
+        </ul>
+    {{ else }}
+        <p>No movies found in the /movies directory.</p>
+    {{ end }}
 </body>
 </html>
