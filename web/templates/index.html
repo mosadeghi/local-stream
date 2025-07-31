@@ -12,9 +12,9 @@
         <ul>
         {{ range .movies }}
             <li>
-                <p>{{ .Title }} ({{ .FileName }})</p>
+                <p>[{{ .ID }}] {{ .Title }}</p>
                 <video width="480" controls preload="metadata">
-                    <source src="/stream/{{ .FileName }}" type="video/mp4">
+                    <source src="/stream/{{ .ID }}" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
             </li>

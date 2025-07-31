@@ -65,6 +65,15 @@ func AddDummyMovie() error {
 	return result.Error
 }
 
+func GetMovieByID(id uint) (*Movie, error) {
+	var movie Movie
+	result := DB.First(&movie, id)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &movie, nil
+}
+
 func GetAllMovies() ([]Movie, error) {
 	var movies []Movie
 	result := DB.Find(&movies)

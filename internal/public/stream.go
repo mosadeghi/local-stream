@@ -7,16 +7,30 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
-	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/mosadeghi/local-stream/internal/db"
+	"github.com/mosadeghi/local-stream/internal/util"
 )
 
 const movieDir = "D:\\Videos\\videos"
 
 func StreamVideo(c *gin.Context) {
-	filename := c.Param("filename")
-	filePath := filepath.Join(movieDir, filepath.Clean(filename))
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil || id <= 0 {
+		c.String(http.StatusBadRequest, "Invalid movie ID")
+		return
+	}
+
+	// Fetch movie by ID
+	movie, err := db.GetMovieByID(uint(id))
+	if err != nil {
+		c.String(http.StatusNotFound, "Movie not found")
+		return
+	}
+
+	filePath := filepath.Join(movieDir, filepath.Clean(movie.FileName))
 
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -43,27 +57,12 @@ func StreamVideo(c *gin.Context) {
 		return
 	}
 
-	// Parse Range header (e.g., "bytes=1000-")
-	const prefix = "bytes="
-	if !strings.HasPrefix(rangeHeader, prefix) {
+	// Handle Range requests
+	start, end := util.ParseRange(rangeHeader, fileSize)
+	if start < 0 {
 		c.Header("Content-Range", fmt.Sprintf("bytes */%d", fileSize))
 		c.Status(http.StatusRequestedRangeNotSatisfiable)
 		return
-	}
-
-	rangeSpec := strings.TrimPrefix(rangeHeader, prefix)
-	parts := strings.Split(rangeSpec, "-")
-	start, err := strconv.ParseInt(parts[0], 10, 64)
-	if err != nil || start < 0 || start >= fileSize {
-		c.Status(http.StatusRequestedRangeNotSatisfiable)
-		return
-	}
-
-	end := fileSize - 1
-	if len(parts) == 2 && parts[1] != "" {
-		if parsedEnd, err := strconv.ParseInt(parts[1], 10, 64); err == nil && parsedEnd < fileSize {
-			end = parsedEnd
-		}
 	}
 
 	// Set headers

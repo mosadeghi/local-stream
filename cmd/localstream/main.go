@@ -49,7 +49,7 @@ func main() {
 		})
 	})
 
-	router.GET("/stream/:filename", public.StreamVideo)
+	router.GET("/stream/:id", public.StreamVideo)
 
 	if err := router.Run(":8080"); err != nil {
 		panic(err)
