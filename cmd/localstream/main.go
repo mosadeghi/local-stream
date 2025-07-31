@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/mosadeghi/local-stream/internal/db"
 	"github.com/mosadeghi/local-stream/internal/public"
 	"github.com/mosadeghi/local-stream/internal/util"
 )
@@ -12,6 +13,23 @@ import (
 const MoviesPath = "D:\\Videos\\videos"
 
 func main() {
+	// Init DB
+	err := db.InitDatabase("metadata.db")
+	if err != nil {
+		panic("DB init failed: " + err.Error())
+	}
+
+	// Test DB:
+	// if err := db.AddDummyMovie(); err != nil {
+	// 	log.Println("Add dummy failed:", err)
+	// }
+
+	// if movies, err := db.GetAllMovies(); err != nil {
+	// 	log.Println("Query failed:", err)
+	// } else {
+	// 	log.Printf("Found %d movie(s)\n", len(movies))
+	// }
+
 	router := gin.Default()
 
 	router.Static("/static", "./web/static")
@@ -34,8 +52,7 @@ func main() {
 
 	router.GET("/stream/:filename", public.StreamVideo)
 
-	err := router.Run(":8080")
-	if err != nil {
+	if err := router.Run(":8080"); err != nil {
 		panic(err)
 	}
 }
