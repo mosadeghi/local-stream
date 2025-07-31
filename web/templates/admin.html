@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Panel</title>
+</head>
+<body>
+    <h1>Admin Panel</h1>
+
+    <form method="POST" action="/admin/update" enctype="multipart/form-data">
+        <label for="id">Select Movie:</label>
+        <select name="id" required>
+            {{ range .movies }}
+                <option value="{{ .ID }}">{{ .Title }} ({{ .FileName }})</option>
+            {{ end }}
+        </select><br><br>
+
+        <label>Title:</label><br>
+        <input type="text" name="title"><br>
+
+        <label>Year:</label><br>
+        <input type="number" name="year"><br>
+
+        <label>Director:</label><br>
+        <input type="text" name="director"><br>
+
+        <label>Summary:</label><br>
+        <textarea name="summary"></textarea><br>
+
+        <label>Poster Image:</label><br>
+        <input type="file" name="poster"><br><br>
+
+        <button type="submit">Save Metadata</button>
+    </form>
+</body>
+</html>

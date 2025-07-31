@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/mosadeghi/local-stream/internal/admin"
 	"github.com/mosadeghi/local-stream/internal/db"
 	"github.com/mosadeghi/local-stream/internal/public"
 	"github.com/mosadeghi/local-stream/internal/util"
@@ -34,6 +35,10 @@ func main() {
 	router.Static("/static", "./web/static")
 
 	router.LoadHTMLGlob("web/templates/*.html")
+
+	adminGroup := router.Group("/admin", admin.BasicAuthMiddleware())
+	adminGroup.GET("/", admin.ShowAdminPanel)
+	adminGroup.POST("/update", admin.UpdateMovieMetadata)
 
 	router.GET("/", func(c *gin.Context) {
 		movies, err := db.GetAllMovies()
