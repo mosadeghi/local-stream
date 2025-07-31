@@ -21,9 +21,11 @@ func main() {
 	}
 
 	// Scan files in /movies
-	files, err := util.ListVideoFiles(MoviesPath)
+	videoDirs := []string{"D:\\Videos\\videos"}
+
+	files, err := util.ListVideoFiles(videoDirs)
 	if err != nil {
-		log.Println("Scan failed:", err)
+		log.Fatal("File scan failed:", err)
 	}
 
 	// Sync files with database

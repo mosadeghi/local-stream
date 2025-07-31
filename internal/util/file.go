@@ -1,7 +1,7 @@
 package util
 
 import (
-	"io/fs"
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -14,21 +14,23 @@ var videoExtensions = map[string]bool{
 	".webm": true,
 }
 
-func ListVideoFiles(dirPath string) ([]string, error) {
+func ListVideoFiles(rootDirs []string) ([]string, error) {
 	var videos []string
-
-	err := filepath.WalkDir(dirPath, func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err // skip on error
-		}
-		if !d.IsDir() {
-			ext := strings.ToLower(filepath.Ext(d.Name()))
-			if videoExtensions[ext] {
-				videos = append(videos, d.Name())
+	for _, root := range rootDirs {
+		err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+			if err != nil || info.IsDir() {
+				return nil
 			}
+			ext := strings.ToLower(filepath.Ext(path))
+			if videoExtensions[ext] {
+				normalized := filepath.ToSlash(path)
+				videos = append(videos, normalized)
+			}
+			return nil
+		})
+		if err != nil {
+			return nil, err
 		}
-		return nil
-	})
-
-	return videos, err
+	}
+	return videos, nil
 }

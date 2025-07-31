@@ -13,8 +13,6 @@ import (
 	"github.com/mosadeghi/local-stream/internal/util"
 )
 
-const movieDir = "D:\\Videos\\videos"
-
 func StreamVideo(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
@@ -30,9 +28,9 @@ func StreamVideo(c *gin.Context) {
 		return
 	}
 
-	filePath := filepath.Join(movieDir, filepath.Clean(movie.FileName))
+	fullPath := filepath.Clean(movie.FilePath)
 
-	file, err := os.Open(filePath)
+	file, err := os.Open(fullPath)
 	if err != nil {
 		c.String(http.StatusNotFound, "File not found")
 		return

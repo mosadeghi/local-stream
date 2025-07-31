@@ -7,16 +7,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/mosadeghi/local-stream/internal/db"
-	"github.com/mosadeghi/local-stream/internal/util"
 )
 
 func ShowAdminPanel(c *gin.Context) {
-	files, _ := util.ListVideoFiles("./movies")
 	movies, _ := db.GetAllMovies()
 
 	c.HTML(http.StatusOK, "admin.html", gin.H{
-		"movieFiles": files,
-		"movies":     movies,
+		"movies": movies,
 	})
 }
 

@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"log"
+	"path/filepath"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -26,25 +27,22 @@ func InitDatabase(dbPath string) error {
 	return nil
 }
 
-func SyncMoviesWithDB(fileNames []string) error {
-	for _, name := range fileNames {
+func SyncMoviesWithDB(paths []string) error {
+	for _, path := range paths {
 		var count int64
-		if err := DB.Model(&Movie{}).Where("file_name = ?", name).Count(&count).Error; err != nil {
+		if err := DB.Model(&Movie{}).Where("file_path = ?", path).Count(&count).Error; err != nil {
 			return err
 		}
 
 		if count == 0 {
 			newMovie := Movie{
-				FileName: name,
-				Title:    name,
-				Year:     0,
-				Director: "",
-				Summary:  "",
+				FilePath: path,
+				Title:    filepath.Base(path),
 			}
 			if err := DB.Create(&newMovie).Error; err != nil {
-				log.Println("Failed to insert:", name, err)
+				log.Println("Failed to insert:", newMovie.Title, err)
 			} else {
-				log.Println("Inserted:", name)
+				log.Println("Inserted:", newMovie.Title)
 			}
 		}
 	}
@@ -53,7 +51,7 @@ func SyncMoviesWithDB(fileNames []string) error {
 
 func AddDummyMovie() error {
 	dummy := Movie{
-		FileName:   "test_movie.mp4",
+		FilePath:   "test_movie.mp4",
 		Title:      "Test Movie",
 		Year:       2024,
 		Director:   "John Doe",

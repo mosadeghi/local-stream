@@ -10,7 +10,7 @@
         <label for="id">Select Movie:</label>
         <select name="id" required>
             {{ range .movies }}
-                <option value="{{ .ID }}">{{ .Title }} ({{ .FileName }})</option>
+                <option value="{{ .ID }}">{{ .Title }} ({{ .FilePath }})</option>
             {{ end }}
         </select><br><br>
 
