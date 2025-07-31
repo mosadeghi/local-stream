@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ .movie.Title }}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <h1>{{ .movie.Title }}</h1>
+
+    {{ if .movie.PosterPath }}
+        <img src="/static/{{ .movie.PosterPath }}" alt="Poster" width="240">
+    {{ end }}
+
+    <p><strong>Release Year:</strong>  {{ .movie.Year }}</p>
+    <p><strong>Director:</strong> {{ .movie.Director }}</p>
+    <p><strong>Summary:</strong> {{ .movie.Summary }}</p>
+
+    <video width="720" controls preload="metadata">
+        <source src="/stream/{{ .movie.ID }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <br><a href="/">← Back to Home</a>
+</body>
+</html>

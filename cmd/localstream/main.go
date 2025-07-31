@@ -54,6 +54,7 @@ func main() {
 		})
 	})
 
+	router.GET("/movie/:id", public.ShowMoviePage)
 	router.GET("/stream/:id", public.StreamVideo)
 
 	if err := router.Run(":8080"); err != nil {
