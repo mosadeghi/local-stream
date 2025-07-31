@@ -19,17 +19,16 @@ func main() {
 		panic("DB init failed: " + err.Error())
 	}
 
-	// Test DB:
-	// if err := db.AddDummyMovie(); err != nil {
-	// 	log.Println("Add dummy failed:", err)
-	// }
+	// Scan files in /movies
+	files, err := util.ListVideoFiles(MoviesPath)
+	if err != nil {
+		log.Println("Scan failed:", err)
+	}
 
-	// if movies, err := db.GetAllMovies(); err != nil {
-	// 	log.Println("Query failed:", err)
-	// } else {
-	// 	log.Printf("Found %d movie(s)\n", len(movies))
-	// }
-
+	// Sync files with database
+	if err := db.SyncMoviesWithDB(files); err != nil {
+		log.Println("DB sync failed:", err)
+	}
 	router := gin.Default()
 
 	router.Static("/static", "./web/static")
@@ -37,10 +36,10 @@ func main() {
 	router.LoadHTMLGlob("web/templates/*.html")
 
 	router.GET("/", func(c *gin.Context) {
-		movies, err := util.ListVideoFiles(MoviesPath)
+		movies, err := db.GetAllMovies()
 		if err != nil {
-			log.Println("Failed to scan movies:", err)
-			movies = []string{}
+			log.Println("DB fetch failed:", err)
+			movies = []db.Movie{}
 		}
 
 		c.HTML(http.StatusOK, "index.html", gin.H{

@@ -2,6 +2,7 @@ package db
 
 import (
 	"fmt"
+	"log"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -22,6 +23,31 @@ func InitDatabase(dbPath string) error {
 		return fmt.Errorf("auto migration failed: %w", err)
 	}
 
+	return nil
+}
+
+func SyncMoviesWithDB(fileNames []string) error {
+	for _, name := range fileNames {
+		var count int64
+		if err := DB.Model(&Movie{}).Where("file_name = ?", name).Count(&count).Error; err != nil {
+			return err
+		}
+
+		if count == 0 {
+			newMovie := Movie{
+				FileName: name,
+				Title:    name,
+				Year:     0,
+				Director: "",
+				Summary:  "",
+			}
+			if err := DB.Create(&newMovie).Error; err != nil {
+				log.Println("Failed to insert:", name, err)
+			} else {
+				log.Println("Inserted:", name)
+			}
+		}
+	}
 	return nil
 }
 
