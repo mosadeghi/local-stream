@@ -52,8 +52,8 @@
 3. ارائه صفحات وب `/`, `/movie/:id`, `/stream/:id`, `/admin`
 4. امکان تغییر متادیتا و بارگذاری پوستر
 
-## 5. نحوه بیلد و اجرا
+## 5. نحوه اجرا
 ```sh
 go mod tidy
-go build -o localstream
-./localstream
+go run .\cmd\localstream\
+
