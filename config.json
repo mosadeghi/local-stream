@@ -1,0 +1,7 @@
+{
+  "admin_username": "admin",
+  "admin_password": "1234",
+  "movie_dirs": [
+    "D:\\Videos\\videos"
+  ]
+}

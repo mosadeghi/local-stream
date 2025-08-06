@@ -6,24 +6,27 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/mosadeghi/local-stream/internal/admin"
+	"github.com/mosadeghi/local-stream/internal/config"
 	"github.com/mosadeghi/local-stream/internal/db"
 	"github.com/mosadeghi/local-stream/internal/public"
 	"github.com/mosadeghi/local-stream/internal/util"
 )
 
-const MoviesPath = "D:\\Videos\\videos"
-
 func main() {
+	// Load config
+	cfg, err := config.LoadConfig("config.json")
+	if err != nil {
+		log.Fatalf("Failed to load config: %v", err)
+	}
+
 	// Init DB
-	err := db.InitDatabase("metadata.db")
+	err = db.InitDatabase("metadata.db")
 	if err != nil {
 		panic("DB init failed: " + err.Error())
 	}
 
 	// Scan files in /movies
-	videoDirs := []string{"D:\\Videos\\videos"}
-
-	files, err := util.ListVideoFiles(videoDirs)
+	files, err := util.ListVideoFiles(cfg.MovieDirs)
 	if err != nil {
 		log.Fatal("File scan failed:", err)
 	}
@@ -38,7 +41,7 @@ func main() {
 
 	router.LoadHTMLGlob("web/templates/*.html")
 
-	adminGroup := router.Group("/admin", admin.BasicAuthMiddleware())
+	adminGroup := router.Group("/admin", admin.BasicAuthMiddleware(cfg))
 	adminGroup.GET("/", admin.ShowAdminPanel)
 	adminGroup.POST("/update", admin.UpdateMovieMetadata)
 
