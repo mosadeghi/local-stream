@@ -1,35 +1,63 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" class="bg-gray-900 text-white">
 <head>
-    <title>Admin Panel</title>
+  <meta charset="UTF-8">
+  <title>Admin Panel - LocalStream</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Admin Panel</h1>
+<body class="min-h-screen flex flex-col">
+  <header class="bg-gray-800 p-4 shadow-md">
+    <div class="container mx-auto flex justify-between">
+      <a href="/" class="text-2xl font-bold">🎬 LocalStream</a>
+      <span class="text-sm text-gray-300">Admin Panel</span>
+    </div>
+  </header>
 
-    <form method="POST" action="/admin/update" enctype="multipart/form-data">
-        <label for="id">Select Movie:</label>
-        <select name="id" required>
-            {{ range .movies }}
-                <option value="{{ .ID }}">{{ .Title }} ({{ .FilePath }})</option>
-            {{ end }}
-        </select><br><br>
+  <main class="flex-1 container mx-auto p-4">
+    <h2 class="text-xl mb-4">Manage Movies</h2>
 
-        <label>Title:</label><br>
-        <input type="text" name="title"><br>
+    <form action="/admin/update" method="POST" enctype="multipart/form-data" class="space-y-4 bg-gray-800 p-6 rounded shadow">
+      <label class="block">
+        <span class="text-gray-300">Select Movie File:</span>
+        <select name="id" class="w-full p-2 bg-gray-700 border border-gray-600 rounded" required>
+          {{ range .movies }}
+          <option value="{{ .ID }}">{{ .Title }} ({{ .FilePath }})</option>
+          {{ end }}
+        </select>
+      </label>
 
-        <label>Year:</label><br>
-        <input type="number" name="year"><br>
+      <label class="block">
+        <span class="text-gray-300">Title:</span>
+        <input type="text" name="title" class="w-full p-2 bg-gray-700 border border-gray-600 rounded" />
+      </label>
 
-        <label>Director:</label><br>
-        <input type="text" name="director"><br>
+      <label class="block">
+        <span class="text-gray-300">Year:</span>
+        <input type="number" name="year" class="w-full p-2 bg-gray-700 border border-gray-600 rounded" />
+      </label>
 
-        <label>Summary:</label><br>
-        <textarea name="summary"></textarea><br>
+      <label class="block">
+        <span class="text-gray-300">Director:</span>
+        <input type="text" name="director" class="w-full p-2 bg-gray-700 border border-gray-600 rounded" />
+      </label>
 
-        <label>Poster Image:</label><br>
-        <input type="file" name="poster"><br><br>
+      <label class="block">
+        <span class="text-gray-300">Summary:</span>
+        <textarea name="summary" class="w-full p-2 bg-gray-700 border border-gray-600 rounded"></textarea>
+      </label>
 
-        <button type="submit">Save Metadata</button>
+      <label class="block">
+        <span class="text-gray-300">Poster:</span>
+        <input type="file" name="poster" accept="image/*" class="w-full p-2 bg-gray-700 border border-gray-600 rounded" />
+      </label>
+
+      <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white">Save</button>
     </form>
+  </main>
+
+  <footer class="bg-gray-800 text-center text-sm text-gray-400 p-4">
+    LocalStream © 2025
+  </footer>
 </body>
 </html>

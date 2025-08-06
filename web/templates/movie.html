@@ -1,26 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="bg-gray-900 text-white">
 <head>
-    <meta charset="UTF-8">
-    <title>{{ .movie.Title }}</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+  <meta charset="UTF-8">
+  <title>{{ .movie.Title }} - LocalStream</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>{{ .movie.Title }}</h1>
+<body class="min-h-screen flex flex-col">
+  <header class="bg-gray-800 p-4 shadow-md">
+    <div class="container mx-auto flex justify-between">
+      <a href="/" class="text-2xl font-bold">🎬 LocalStream</a>
+      <a href="/admin" class="text-sm text-gray-300 hover:text-white">Admin Panel</a>
+    </div>
+  </header>
 
-    {{ if .movie.PosterPath }}
-        <img src="/static/{{ .movie.PosterPath }}" alt="Poster" width="240">
-    {{ end }}
+  <main class="flex-1 container mx-auto p-4">
+    <h2 class="text-3xl font-bold mb-2">{{ .movie.Title }}</h2>
+    <p class="text-gray-400 mb-4">
+      <strong>Director:</strong> {{ .movie.Director }} <br>
+      <strong>Year:</strong> {{ .movie.Year }}
+    </p>
+    <p class="mb-6 text-gray-300">{{ .movie.Summary }}</p>
 
-    <p><strong>Release Year:</strong>  {{ .movie.Year }}</p>
-    <p><strong>Director:</strong> {{ .movie.Director }}</p>
-    <p><strong>Summary:</strong> {{ .movie.Summary }}</p>
-
-    <video width="720" controls preload="metadata">
-        <source src="/stream/{{ .movie.ID }}" type="video/mp4">
-        Your browser does not support the video tag.
+    <video controls class="w-full rounded shadow">
+      <source src="/stream/{{ .movie.ID }}" type="video/mp4">
+      Your browser does not support the video tag.
     </video>
+  </main>
 
-    <br><a href="/">← Back to Home</a>
+  <footer class="bg-gray-800 text-center text-sm text-gray-400 p-4">
+    LocalStream © 2025
+  </footer>
 </body>
 </html>
