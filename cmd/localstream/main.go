@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mosadeghi/local-stream/internal/admin"
@@ -35,32 +34,31 @@ func main() {
 	if err := db.SyncMoviesWithDB(files); err != nil {
 		log.Println("DB sync failed:", err)
 	}
-	router := gin.Default()
 
+	router := gin.Default()
+	router.LoadHTMLGlob("web/templates/*.html")
 	router.Static("/static", "./web/static")
 
-	router.LoadHTMLGlob("web/templates/*.html")
-
-	adminGroup := router.Group("/admin", admin.BasicAuthMiddleware(cfg))
-	adminGroup.GET("/", admin.ShowAdminPanel)
-	adminGroup.POST("/update", admin.UpdateMovieMetadata)
-
-	router.GET("/", func(c *gin.Context) {
-		movies, err := db.GetAllMovies()
-		if err != nil {
-			log.Println("DB fetch failed:", err)
-			movies = []db.Movie{}
-		}
-
-		c.HTML(http.StatusOK, "index.html", gin.H{
-			"title":   "LocalStream Home",
-			"message": "Available Movies",
-			"movies":  movies,
-		})
-	})
-
+	router.GET("/", public.HomePage)
 	router.GET("/movie/:id", public.ShowMoviePage)
 	router.GET("/stream/:id", public.StreamVideo)
+	adminGroup := router.Group("/admin", admin.BasicAuthMiddleware(cfg))
+	{
+		adminGroup.GET("/", admin.ShowAdminPanel)
+		adminGroup.POST("/update", admin.UpdateMovieMetadata)
+	}
+
+	api := router.Group("/api")
+	{
+		api_v1 := api.Group("/v1")
+		{
+			api_v1.GET("/movies", public.ListMovies)
+
+			api_v1.GET("/movies/:id", public.MovieDetails)
+			api_v1.PUT("/movies/:id", public.UpdateMovieMetadata)
+			api_v1.POST("/movies/:id/poster", public.UploadMoviePoster)
+		}
+	}
 
 	if err := router.Run(":8080"); err != nil {
 		panic(err)
