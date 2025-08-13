@@ -2,6 +2,8 @@ package main
 
 import (
 	"log"
+	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mosadeghi/local-stream/internal/admin"
@@ -40,7 +42,6 @@ func main() {
 	router.Static("/static", "./web/static")
 
 	router.GET("/", public.HomePage)
-	router.GET("/movie/:id", public.ShowMoviePage)
 	router.GET("/stream/:id", public.StreamVideo)
 	adminGroup := router.Group("/admin", admin.BasicAuthMiddleware(cfg))
 	{
@@ -59,6 +60,18 @@ func main() {
 			api_v1.POST("/movies/:id/poster", public.UploadMoviePoster)
 		}
 	}
+
+	router.Static("/app", "./frontend/dist")
+
+	router.NoRoute(func(c *gin.Context) {
+		if strings.HasPrefix(c.Request.URL.Path, "/app") {
+			c.File("./frontend/dist/index.html")
+			return
+		}
+		c.JSON(http.StatusNotFound, gin.H{
+			"message": "Oooooooops! Donno what you looking for!",
+		})
+	})
 
 	if err := router.Run(":8080"); err != nil {
 		panic(err)

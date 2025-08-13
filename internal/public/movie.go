@@ -10,37 +10,9 @@ import (
 	"github.com/mosadeghi/local-stream/internal/db"
 )
 
-func ShowMoviePage(c *gin.Context) {
-	idStr := c.Param("id")
-	id, err := strconv.Atoi(idStr)
-	if err != nil || id <= 0 {
-		c.String(http.StatusBadRequest, "Invalid movie ID")
-		return
-	}
-
-	movie, err := db.GetMovieByID(uint(id))
-	if err != nil {
-		c.String(http.StatusNotFound, "Movie not found")
-		return
-	}
-
-	c.HTML(http.StatusOK, "movie.html", gin.H{
-		"movie": movie,
-	})
-}
-
 func HomePage(c *gin.Context) {
-	movies, err := db.GetAllMovies()
-	if err != nil {
-		log.Println("DB fetch failed:", err)
-		movies = []db.Movie{}
-	}
-
-	c.HTML(http.StatusOK, "index.html", gin.H{
-		"title":   "LocalStream Home",
-		"message": "Available Movies",
-		"movies":  movies,
-	})
+	// redirect to react client!
+	c.Redirect(http.StatusPermanentRedirect, "./app")
 }
 
 func ListMovies(c *gin.Context) {
