@@ -37,7 +37,7 @@ cd localstream
 
 ```bash
 go mod tidy
-go run main.go
+go run /cmd/local-stream/
 ```
 
 > 
@@ -48,7 +48,7 @@ go run main.go
 ```bash
 cd frontend
 npm install
-npm start
+npm run dev
 ```
 
 > حالت توسعه فرانت‌اند روی `http://localhost:3000` اجرا می‌شود.
@@ -130,3 +130,4 @@ POST /api/v1/movies/:id/poster
 
 این پروژه تحت لایسنس MIT منتشر شده است.
 آزاد هستید آن را تغییر داده و استفاده کنید.
+
